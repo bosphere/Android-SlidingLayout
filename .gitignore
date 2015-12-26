@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+build/
+*/build/
+local.properties
+*.iml
+captures/
+
+# OSX files
+.DS_Store
