@@ -136,18 +136,31 @@ public class SlidingLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int maxHeight = 0;
+        int childMeasureSpec = getDefaultChildMeasureSpec();
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+            measureChild(child, childMeasureSpec, childMeasureSpec);
 
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             maxHeight = Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
         }
 
         maxHeight = Math.max(maxHeight + getPaddingTop() + getPaddingBottom(), getSuggestedMinimumHeight());
-        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec), resolveSize(maxHeight,
-                heightMeasureSpec));
+        int w = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        int h;
+        if (heightMode == MeasureSpec.EXACTLY) {
+            h = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+        } else {
+            h = resolveSize(maxHeight, heightMeasureSpec);
+        }
+
+        setMeasuredDimension(w, h);
+    }
+
+    private int getDefaultChildMeasureSpec() {
+        return MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
     }
 
     @Override
